@@ -1,5 +1,5 @@
-const chromatic = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-for(note in chromatic){chromatic.push(chromatic[note])}//make chromatic loop
+const chromaticTemplate = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const chromatic = [];
 const whiteKeys = [];
 const blackKeys = [];
 const width = 800, height = 500;
@@ -7,10 +7,15 @@ let currentNotes = [];
 const scale = 12;
 
 function setup() {
+	let note = 0;
+	let octave = -1;
+	for( let i = 0; i < 84; i++ ){
+		if(i % 12 === 0) {octave++; note = 0;} else {note++;}
+		chromatic.push(chromaticTemplate[note].concat(octave.toString()));
+	}
 	let canvas = createCanvas(width, height);
 	canvas.parent('canvas-holder');
 	fillKeys();
-	currentNotes = createMajorScale('A');
 }
 
 function draw() {
@@ -28,6 +33,20 @@ const createMajorScale = tonic => {
 	const push = () => {result.push(chromatic[tempIndex]);}
 	const wholeStep = () => {tempIndex += 2;}
 	const halfStep = () => {tempIndex += 1;}
+	push() //tonic
+	wholeStep();
+	push() //second
+	wholeStep();
+	push() //major third
+	halfStep();
+	push(); //perfect fourth
+	wholeStep();
+	push(); //perfect fifth
+	wholeStep(); 
+	push(); //major sixth
+	wholeStep();
+	push(); //major seventh
+	halfStep();
 	push() //tonic
 	wholeStep();
 	push() //second
@@ -66,6 +85,20 @@ const createMinorScale = tonic => {
 	push(); //minor sixth
 	wholeStep();
 	push(); //minor seventh
+	wholeStep();
+	push() //tonic
+	wholeStep();
+	push() //second
+	halfStep();
+	push() //minor third
+	wholeStep();
+	push(); //perfect fourth
+	wholeStep();
+	push(); //perfect fifth
+	halfStep(); 
+	push(); //minor sixth
+	wholeStep();
+	push(); //minor seventh
 	return result;
 }
 
@@ -77,25 +110,19 @@ const createChord = (tonic, type, extensions) => {
 	let result = [];
 	let scale;
 	if(type === 'major'){
-		scale = createMajorScale(tonic.toUpperCase());
+		scale = createMajorScale(tonic.toUpperCase().concat('2'));
 	}else if (type === 'minor') {
-		scale = createMinorScale(tonic.toUpperCase());
+		scale = createMinorScale(tonic.toUpperCase().concat('2'));
 	}else {
-		scale = createMajorScale(tonic.toUpperCase());
+		scale = createMajorScale(tonic.toUpperCase().concat('2'));
 	}
-	for(note in scale){scale.push(scale[note])}//make scale loop
 	console.log(scale);
-	result.push(scale[0] + '4');
-	result.push(scale[2] + '4');
-	result.push(scale[4] + '4');
+	result.push(scale[0]);
+	result.push(scale[2]);
+	result.push(scale[4]);
 	if(extensions){
 	extensions.forEach(extension => {
-			console.log(extension);
-			if(extension < 8){
-				result.push(scale[extension - 1] + '4');
-			}else {
-				result.push(scale[extension - 1] + '5');
-			}
+			result.push(scale[extension - 1]);
 		});
 	}
 	return result;
@@ -146,17 +173,15 @@ const whiteKey = (note, startx) => {
 
 const fillKeys = () => {
 	let tempx = 50 - scale;
-	for(let i = 0; i < 7; i++){
-		for(let j = 0; j < 12; j++) {
-			if( !chromatic[j].includes('#') ) {
-				whiteKeys.push(whiteKey( chromatic[j] + (i).toString(), tempx));
+	for(let i = 0; i < 84; i++){
+			if( !chromatic[i].includes('#') ) {
+				whiteKeys.push(whiteKey( chromatic[i], tempx));
 				tempx += scale;
 			}else {
 				tempx -= scale / 4;
-				blackKeys.push(blackKey( chromatic[j] + (i).toString(), tempx));
+				blackKeys.push(blackKey( chromatic[i], tempx));
 				tempx += scale / 4;
 			}
-		}
 	}
 }
 
