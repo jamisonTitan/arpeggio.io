@@ -8,8 +8,24 @@
     <script src='index.js'></script>
   </head>
   <body>
-  	<input id='in' type='text' placeholder='type something'>
-  	<button id='btn'>enter</button>
-  	<div id='canvas-holder'></div>
+  	<input id='in' type='text' placeholder='f major 7 12'>
+    <button id='btn'>enter</button>
+      <div>
+    	 <div id='canvas-holder'></div>
+             <label for="soundType">Select a waveform:</label> <select name="soundType" id="soundType">
+            <option value="triangle" selected>Triangle</option>
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="sawtooth">Sawtooth</option>
+          </select>
+              <div >
+              <p> Volume: </p>
+              <input type="range" id="volume" min="0" max="2" value="1" step="0.01" />
+            </div>
+      </div>
+    <h3>instructions</h3>
+    <p>
+      Type a note name followed by a space followed by a chord type followed by any number of extensions within 2 octaves of the root.
+    </p>
   </body>
 </html>
