@@ -11,7 +11,7 @@ const ctx = new AudioContext();
 const gainNode = ctx.createGain();
 const convolver = ctx.createConvolver();
 let playing = false;
-let overlap = false;
+let overlap = true;
 let reverb = true;
 
   noteFreq["C0"] = 261.625565300598634;
@@ -51,6 +51,19 @@ let reverb = true;
   noteFreq["A#2"] = 1864.655046072359665;
   noteFreq["B2"] = 1975.533205024496447;
   noteFreq["C3"] = 2093.004522404789077;
+  noteFreq["C#3"] = 2217.461047814976769;
+  noteFreq["D3"] = 2349.318143339260482;
+  noteFreq["D#3"] = 2489.015869776647285;
+  noteFreq["E3"] = 2637.020455302959437;
+  noteFreq["F3"] = 2793.825851464031075;
+  noteFreq["F#3"] = 2959.955381693075191;
+  noteFreq["G3"] = 3135.963487853994352;
+  noteFreq["G#3"] = 3322.437580639561108;
+  noteFreq["A3"] = 3520.000000000000000;
+  noteFreq["A#3"] = 3729.310092144719331;
+  noteFreq["B3"] = 3951.066410048992894;
+  noteFreq["C3"] = 4186.009044809578154;
+
 
 function impulseResponse( duration, decay, reverse ) {
     var sampleRate = ctx.sampleRate;
@@ -69,12 +82,10 @@ function impulseResponse( duration, decay, reverse ) {
     return impulse;
 }
 
-convolver.buffer = impulseResponse(4,4,false);
-
 const fillKeys = () => {
 	let tempx = 50 - scale;
 	let freq;
-	for(let i = 0; i < chromatic.length; i++){
+	for(i in chromatic){
 			freq = noteFreq[chromatic[i]]
 			if( !chromatic[i].includes('#') ) {
 				whiteKeys.push(whiteKey( chromatic[i], freq, tempx));
@@ -97,6 +108,11 @@ function setup() {
 	let canvas = createCanvas(width, height);
 	canvas.parent('canvas-holder');
 	fillKeys();
+	convolver.buffer = impulseResponse(4,4,true);
+		for(n in chromatic){
+			noteFreq[chromatic[n]] /= 2;
+		}
+		console.log(noteFreq);
 }
 
 function draw() {
@@ -105,7 +121,7 @@ function draw() {
 	for(key of blackKeys){key.show()}
 	if(!playing){arpeggiate(currentNotes, false)}
 	wave = $('#soundType').val();
-	console.log(wave);
+	
 }
 
 const createMajorScale = tonic => {
@@ -144,6 +160,23 @@ const createMajorScale = tonic => {
 	push(); //major sixth
 	wholeStep();
 	push(); //major seventh
+	halfStep();
+	push() //tonic
+	wholeStep();
+	push() //second
+	wholeStep();
+	push() //major third
+	halfStep();
+	push(); //perfect fourth
+	wholeStep();
+	push(); //perfect fifth
+	wholeStep(); 
+	push(); //major sixth
+	wholeStep();
+	push(); //major seventh
+	halfStep();
+	push() //tonic
+	console.log(result);
 	return result;
 }
 
@@ -153,36 +186,33 @@ const createMinorScale = tonic => {
 	}
 	let result = [];
 	let tempIndex = chromatic.indexOf(tonic);
-	const push = () => {result.push(chromatic[tempIndex]);}
+	const push = () => {
+		if(chromatic[tempIndex] !== undefined){result.push(chromatic[tempIndex]);}
+	}
 	const wholeStep = () => {tempIndex += 2;}
 	const halfStep = () => {tempIndex += 1;}
-	push() //tonic
-	wholeStep();
-	push() //second
-	halfStep();
-	push() //minor third
-	wholeStep();
-	push(); //perfect fourth
-	wholeStep();
-	push(); //perfect fifth
-	halfStep(); 
-	push(); //minor sixth
-	wholeStep();
-	push(); //minor seventh
-	wholeStep();
-	push() //tonic
-	wholeStep();
-	push() //second
-	halfStep();
-	push() //minor third
-	wholeStep();
-	push(); //perfect fourth
-	wholeStep();
-	push(); //perfect fifth
-	halfStep(); 
-	push(); //minor sixth
-	wholeStep();
-	push(); //minor seventh
+	const pushOctave = () => {
+		push() //tonic
+		wholeStep();
+		push() //second
+		halfStep();
+		push() //minor third
+		wholeStep();
+		push(); //perfect fourth
+		wholeStep();
+		push(); //perfect fifth
+		halfStep(); 
+		push(); //minor sixth
+		wholeStep();
+		push(); //minor seventh
+		wholeStep();
+		push() //tonic
+	}
+	for(let i = 0; i < (chromatic.length - chromatic.indexOf(tonic)); i+=12){
+		pushOctave();
+	}
+	console.log(result);
+	console.log(chromatic.length - chromatic.indexOf(tonic));
 	return result;
 }
 
@@ -192,29 +222,28 @@ const arpeggiate = (chord, loop) => {
 	blackKeys.forEach(key => key.stop());
 	for(let i = 0; i < chord.length; i++) {
 		setTimeout(() => {
-
 			if(i === chord.length+1 || !chord[i].includes('#')){
 				if(i!== 0) {
 						whiteKeys.forEach(k => {
-						if(k.note === chord[i - 1]) {k.stop()} 
+						if(k.note === chord[i - 1]) {k.stop();} 
 					});
 				}
 				if(i !== chord.length + 1) {
 						whiteKeys.forEach(k => {
 						//console.log(k.note);
-						if(k.note === chord[i]) {k.start()} 
+						if(k.note === chord[i]) {k.start();} 
 					});
 				}
 			}else{
-					if(i!== 0) {
-						blackKeys.forEach(k => {
-						if(k.note === chord[i - 1]) {k.stop()} 
-					});
+				if(i!== 0) {
+					blackKeys.forEach(k => {
+					if(k.note === chord[i - 1]) {k.stop();} 
+				});
 				}
 				if(i !== chord.length + 1) {
 						blackKeys.forEach(k => {
 						//console.log(k.note);
-						if(k.note === chord[i]) {k.start()} 
+						if(k.note === chord[i]) {k.start();} 
 					});
 				}
 			}
@@ -232,23 +261,40 @@ const arpeggiate = (chord, loop) => {
 
 
 const createChord = (tonic, type, extensions) => {
-	console.log(extensions);
+	console.log(type);
 	if(!chromatic.includes(tonic)){
 		//TODO error handling
 	}
 	let result = [];
 	let scale;
-	if(type === 'major'){
-		scale = createMajorScale(tonic.toUpperCase().concat('0'));
-	}else if (type === 'minor') {
-		scale = createMinorScale(tonic.toUpperCase().concat('0'));
+	let chord = tonic.concat('0');
+	if(type === 'M'){
+		scale = createMajorScale(chord);
+		result.push(scale[0]);
+		result.push(scale[2]);
+		result.push(scale[4]);
+	}else if (type === 'm') {
+		scale = createMinorScale(chord);
+		result.push(scale[0]);
+		result.push(scale[2]);
+		result.push(scale[4]);
+	}else if (type = 'sus2'){
+		scale = createMajorScale(chord);
+		result.push(scale[0]);
+		result.push(scale[1]);
+		result.push(scale[4]);
+	}else if (type = 'sus4') {
+		scale = createMajorScale(chord);
+		result.push(scale[0]);
+		result.push(scale[3]);
+		result.push(scale[4]);
 	}else {
-		scale = createMajorScale(tonic.toUpperCase().concat('0'));
+		scale = createMajorScale(chord);
+		result.push(scale[0]);
+		result.push(scale[2]);
+		result.push(scale[4]);
 	}
-	console.log(scale);
-	result.push(scale[0]);
-	result.push(scale[2]);
-	result.push(scale[4]);
+	console.log(result);
 	if(extensions){
 	extensions.forEach(extension => {
 			result.push(scale[extension - 1]);
@@ -322,6 +368,7 @@ const whiteKey = (note_, freq, startx) => {
 		},
 		start() {
 			f.type = wave;
+			f.frequency.value = noteFreq[note];
 			if(reverb){
 				f.connect(gainNode).connect(convolver).connect(ctx.destination);
 			} else {
@@ -335,10 +382,22 @@ const whiteKey = (note_, freq, startx) => {
 }
 
 $(document).ready(function(){
-		$("#volume").on("input change", function() { 
-			gainNode.gain.value = this.value; 
-		});
+	$("#volume").on("input change", function() { 
+		gainNode.gain.value = this.value; 
+	});
 
+	$("#octaveUp").on("click", function() { 
+		for(n in chromatic){
+			noteFreq[chromatic[n]] *= 2;
+		}
+	});
+
+	$("#octaveDown").on("click", function() { 
+		for(n in chromatic){
+			noteFreq[chromatic[n]] /= 2;
+		}
+	});
+		
 	$('#btn').on('click', function() {
 		let  str = $('#in').val();
 		console.log(str);
@@ -349,13 +408,13 @@ $(document).ready(function(){
 				currentNotes = createChord(str[0].toUpperCase(), 'major');
 			break;
 			case 2:
-				currentNotes = createChord(str[0].toUpperCase(), str[1].toLowerCase());
+				currentNotes = createChord(str[0].toUpperCase(), str[1]);
 			break;
 			default:
 				let ext = str.splice(2, str.length - 2).map(ext => parseInt(ext, 10));
 				console.log(ext);
 				currentNotes = 
-					createChord(str[0].toUpperCase(), str[1].toLowerCase(), ext);
+					createChord(str[0].toUpperCase(), str[1], ext);
 			break;
 		}
 		console.log(currentNotes);

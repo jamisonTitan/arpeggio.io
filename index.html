@@ -8,7 +8,7 @@
     <script src='index.js'></script>
   </head>
   <body>
-  	<input id='in' type='text' placeholder='f major 7 12'>
+  	<input id='in' type='text' placeholder='f major 7 8 14'>
     <button id='btn'>enter</button>
       <div>
     	 <div id='canvas-holder'></div>
@@ -18,14 +18,20 @@
             <option value="square">Square</option>
             <option value="sawtooth">Sawtooth</option>
           </select>
-              <div >
               <p> Volume: </p>
               <input type="range" id="volume" min="0" max="2" value="1" step="0.01" />
-            </div>
-      </div>
+              <button id='octaveUp'>up octave </button>
+              <button id='octaveDown'>down octave </button>
+              <p> Reverb </p>
+              <label class="switch">
+              <input id='reverb' type="checkbox">
+              <span class="slider"></span>
+            </label>
+
+    </div>
     <h3>instructions</h3>
     <p>
-      Type a note name followed by a space followed by a chord type followed by any number of extensions within 2 octaves of the root.
+      Type a note name followed by a space followed by a capital or lowercase 'm' for major or minor respectively followed by any number of extensions within 2 octaves of the root.
     </p>
   </body>
 </html>
