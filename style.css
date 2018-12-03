@@ -1,16 +1,25 @@
 body {
 	text-align: center;
+  background-color: #fbc1db;
+}
+#top {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
-#control-panel {
-	display: flex;
-	justify-content: space-between;
-	flex-direction: column;
-	background-color: blue;
+#control-panel #canvas-holder {
+  width:50%;
+    display: flex;
+  flex-direction: row;
 }
-
+#logo {
+  width: 340px;
+  height: auto;
+}
  /* The switch - the box around the slider */
 .switch {
+  padding-right: 12px;
   position: relative;
   display: inline-block;
   width: 60px;
@@ -24,8 +33,15 @@ body {
   height: 0;
 }
 
+#sliders {
+    display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
 /* The slider */
 .slider {
+  padding-right: 12px;
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -71,3 +87,54 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 } 
+
+.select {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 15px;
+}    .select select {
+font-family: 'Arial';
+display: inline-block;
+cursor: pointer;
+padding: 17px 24px;
+outline: 0;
+border: 3px solid #000000;
+border-radius: 50%;
+background: #330033;
+color: #ffffff;
+appearance: none;
+-webkit-appearance: none;
+-moz-appearance: none;
+}
+.select select::-ms-expand {
+  display: none;
+}
+.select select:hover,
+.select select:focus {
+  color: #FFFFFF;
+  background: #4d004d;
+}
+.select select:disabled {
+  opacity: 0.7;
+  pointer-events: none;
+}
+.select_arrow {
+    position: absolute;
+    top: 20px;
+    right: 27px;
+    width: 13px;
+    height: 13px;
+    border: solid #ffffff;
+    border-width: 0 4px 4px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+.select select:hover ~ .select_arrow,
+.select select:focus ~ .select_arrow {
+    border-color: #ffffff;
+}
+.select select:disabled ~ .select_arrow {
+    border-top-color: #cccccc;
+}

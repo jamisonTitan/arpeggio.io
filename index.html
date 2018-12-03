@@ -1,37 +1,177 @@
 <!DOCTYPE html>
 <html>
   <head style="text-align:center;">
-    <meta charset='UTF-8'>
-    <title>Chords displayer</title></head><script src="jquery.min.js"></script>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Arpeggio.io</title>
+    <script src="jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src='p5.min.js'></script>
     <script src='index.js'></script>
   </head>
   <body>
-  	<input id='in' type='text' placeholder='f major 7 8 14'>
-    <button id='btn'>enter</button>
       <div>
-    	 <div id='canvas-holder'></div>
-             <label for="soundType">Select a waveform:</label> <select name="soundType" id="soundType">
-            <option value="triangle" selected>Triangle</option>
-            <option value="sine">Sine</option>
-            <option value="square">Square</option>
-            <option value="sawtooth">Sawtooth</option>
-          </select>
+      <img id='logo'src="logo.png">
+      <div id="top">
+  	   <div id='canvas-holder'></div>  
+        <div id='control-panel'>
+          </div>
+        </div>
+            <div>
+            <button id='octaveUp' class='select'>up octave </button>
+            <button id='octaveDown' class='select'>down octave </button>
+
+            <label for="soundType">waveform:</label> 
+            <select name="soundType" class='select' id="soundType">
+              <option value="triangle" selected>Triangle</option>
+              <option value="sine">Sine</option>
+              <option value="square">Square</option>
+              <option value="sawtooth">Sawtooth</option>
+            </select>
+          </div>
+          <div id='chords-holder'>
+            <div>
+              <select name='chord-1' id='chord-1' class='select'>
+                 <option value="C" selected>C</option>
+                 <option value="C#">C#/Bb</option>
+                 <option value="D">D</option>
+                 <option value="D#">D#/Eb</option>
+                 <option value="E">E</option>
+                 <option value="F">F</option>
+                 <option value="F#">F#/Gb</option>
+                 <option value="G">G</option>
+                 <option value="G#">G#/Ab</option>
+                 <option value="A">B</option>
+                 <option value="B">B#/Cb</option>
+              </select>
+              <select name='type-1' id='type-1' class='select'>
+                <option value="major" selected>Major</option>
+                <option value='minor'>Minor</option>
+                <option value="sus2">sus2</option>
+                <option value="sus4">sus4</option>
+              </select>
+              <select name='ext-0A' id='ext-0A' class='select'>
+                <option value="0" selected="">0</option>
+              </select>
+              <select name='ext-1A' id='ext-1A' class='select'>
+                <option value="0" selected="">0</option>
+              </select>
+              <select name='ext-2A' id='ext-2A' class='select'>
+                <option value="0" selected="">0</option>
+              </select>
+            </div>
+            <div>
+              <select name='chord-2' id='chord-2' class='select'>
+                 <option value="C" selected>C</option>
+                 <option value="C#">C#/Bb</option>
+                 <option value="D">D</option>
+                 <option value="D#">D#/Eb</option>
+                 <option value="E">E</option>
+                 <option value="F">F</option>
+                 <option value="F#">F#/Gb</option>
+                 <option value="G">G</option>
+                 <option value="G#">G#/Ab</option>
+                 <option value="A">B</option>
+                 <option value="B">B#/Cb</option>
+              </select>
+              <select name='type-2' id='type-2' class='select'>
+                <option value="major" selected>Major</option>
+                <option value='minor'>Minor</option>
+                <option value="sus2">sus2</option>
+                <option value="sus4">sus4</option>
+              </select>
+              <select name='ext-0B' id='ext-0B' class='select'>
+                <option value="0" selected="">0</option>
+              </select>
+              <select name='ext-1B' id='ext-1B' class='select'>
+                <option value="0" selected="">0</option>
+              </select>
+              <select name='ext-2B' id='ext-2B' class='select'>
+                <option value="0" selected="">0</option>
+              </select>
+            </div>
+            <div>
+              <select name='chord-3' id='chord-3' class='select'>
+                 <option value="C" selected>C</option>
+                 <option value="C#">C#/Bb</option>
+                 <option value="D">D</option>
+                 <option value="D#">D#/Eb</option>
+                 <option value="E">E</option>
+                 <option value="F">F</option>
+                 <option value="F#">F#/Gb</option>
+                 <option value="G">G</option>
+                 <option value="G#">G#/Ab</option>
+                 <option value="A">B</option>
+                 <option value="B">B#/Cb</option>
+              </select>
+              <select name='type-3' id='type-3' class='select'>
+                <option value="major" selected>Major</option>
+                <option value='minor'>Minor</option>
+                <option value="sus2">sus2</option>
+                <option value="sus4">sus4</option>
+              </select>
+              <select name='ext-0C' id='ext-0C' class='select'>
+                <option value="0" selected="">0</option>
+              </select>
+              <select name='ext-1C' id='ext-1C' class='select'>
+                <option value="0" selected="">0</option>
+              </select>
+              <select name='ext-2C' id='ext-2C' class='select'>
+                <option value="0" selected="">0</option>
+              </select>
+            </div>
+            <div>
+              <select name='chord-4' id='chord-4' class='select'>
+                 <option value="C" selected>C</option>
+                 <option value="C#">C#/Bb</option>
+                 <option value="D">D</option>
+                 <option value="D#">D#/Eb</option>
+                 <option value="E">E</option>
+                 <option value="F">F</option>
+                 <option value="F#">F#/Gb</option>
+                 <option value="G">G</option>
+                 <option value="G#">G#/Ab</option>
+                 <option value="A">B</option>
+                 <option value="B">B#/Cb</option>
+              </select>
+              <select name='type-4' id='type-4' class='select'>
+                <option value="major" selected>Major</option>
+                <option value='minor'>Minor</option>
+                <option value="sus2">sus2</option>
+                <option value="sus4">sus4</option>
+              </select>
+              <select name='ext-0D' id='ext-0D' class='select'>
+                <option value="0" selected="">0</option>
+              </select>
+              <select name='ext-1D' id='ext-1D' class='select'>
+                <option value="0" selected="">0</option>
+              </select>
+              <select name='ext-2D' id='ext-2D' class='select'>
+                <option value="0" selected="">0</option>
+              </select>
+              </div>
               <p> Volume: </p>
-              <input type="range" id="volume" min="0" max="2" value="1" step="0.01" />
-              <button id='octaveUp'>up octave </button>
-              <button id='octaveDown'>down octave </button>
+            <input type="range" id="volume" min="0" max="2" value="1" step="0.01" />
+            <div id='sliders'>
+              <div>
               <p> Reverb </p>
               <label class="switch">
               <input id='reverb' type="checkbox">
               <span class="slider"></span>
-            </label>
-
+            </div>
+                    <div>
+              <p> Reverb </p>
+              <label class="switch">
+              <input id='reverb' type="checkbox">
+              <span class="slider"></span>
+            </div>
+                    <div>
+              <p> Reverb </p>
+              <label class="switch">
+              <input id='reverb' type="checkbox">
+              <span class="slider"></span>
+            </div>
+          </div>
+          </div>
     </div>
-    <h3>instructions</h3>
-    <p>
-      Type a note name followed by a space followed by a capital or lowercase 'm' for major or minor respectively followed by any number of extensions within 2 octaves of the root.
-    </p>
   </body>
 </html>

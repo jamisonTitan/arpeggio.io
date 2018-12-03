@@ -2,16 +2,18 @@ const chromaticTemplate = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
 const chromatic = [];
 const whiteKeys = [];
 const blackKeys = [];
-const width = 400, height = 500;
+const width = 400, height = 100;
 let currentNotes = [];
 let wave = 'triangle';
+let currentChord = 0;
 const scale = 16;
 const noteFreq = [];
+let currentChords = [];
 const ctx = new AudioContext();
 const gainNode = ctx.createGain();
 const convolver = ctx.createConvolver();
 let playing = false;
-let overlap = true;
+let overlap = false;
 let reverb = true;
 
   noteFreq["C0"] = 261.625565300598634;
@@ -108,21 +110,29 @@ function setup() {
 	let canvas = createCanvas(width, height);
 	canvas.parent('canvas-holder');
 	fillKeys();
-	convolver.buffer = impulseResponse(4,4,true);
-		for(n in chromatic){
-			noteFreq[chromatic[n]] /= 2;
-		}
-		console.log(noteFreq);
+	convolver.buffer = impulseResponse(4,4,false);
+		currentChords  = [
+			createChord("C","sus4",[8 , 10, 16]),
+			createChord("C","major",[8 , 10, 15]),
+			createChord("a","minor", [8 , 10, 15]),
+			createChord("G","major", [8 , 10, 15]),
+						];
 }
 
-function draw() {
-	background(100,100,200);
-	for(key of whiteKeys){key.show()}
-	for(key of blackKeys){key.show()}
-	if(!playing){arpeggiate(currentNotes, false)}
-	wave = $('#soundType').val();
-	
-}
+	function draw() {
+		background('#fbc1db');
+		for(key of whiteKeys){key.show()}
+		for(key of blackKeys){key.show()}
+		if(!playing && !overlap){
+			if(!(currentChord === 0) && currentChord % 3 === 0) {
+				currentChord = 0;
+			}else{ currentChord++; }
+			console.log(currentChords[currentChord]);
+			currentNotes = currentChords[currentChord];
+			arpeggiate(currentChords[currentChord], false);
+		}
+	}
+
 
 const createMajorScale = tonic => {
 	if(!chromatic.includes(tonic)){
@@ -130,52 +140,31 @@ const createMajorScale = tonic => {
 	}
 	let result = [];
 	let tempIndex = chromatic.indexOf(tonic);
-	const push = () => {result.push(chromatic[tempIndex]);}
+	const push = () => {
+		if(chromatic[tempIndex] !== undefined){result.push(chromatic[tempIndex]);}
+	}
 	const wholeStep = () => {tempIndex += 2;}
 	const halfStep = () => {tempIndex += 1;}
-	push() //tonic
-	wholeStep();
-	push() //second
-	wholeStep();
-	push() //major third
-	halfStep();
-	push(); //perfect fourth
-	wholeStep();
-	push(); //perfect fifth
-	wholeStep(); 
-	push(); //major sixth
-	wholeStep();
-	push(); //major seventh
-	halfStep();
-	push() //tonic
-	wholeStep();
-	push() //second
-	wholeStep();
-	push() //major third
-	halfStep();
-	push(); //perfect fourth
-	wholeStep();
-	push(); //perfect fifth
-	wholeStep(); 
-	push(); //major sixth
-	wholeStep();
-	push(); //major seventh
-	halfStep();
-	push() //tonic
-	wholeStep();
-	push() //second
-	wholeStep();
-	push() //major third
-	halfStep();
-	push(); //perfect fourth
-	wholeStep();
-	push(); //perfect fifth
-	wholeStep(); 
-	push(); //major sixth
-	wholeStep();
-	push(); //major seventh
-	halfStep();
-	push() //tonic
+	const pushOctave = () => {
+		push() //tonic
+		wholeStep();
+		push() //second
+		wholeStep();
+		push() //major third
+		halfStep();
+		push(); //perfect fourth
+		wholeStep();
+		push(); //perfect fifth
+		wholeStep(); 
+		push(); //major sixth
+		wholeStep();
+		push(); //major seventh
+		halfStep();
+		push() //tonic
+	}
+	for(let i = 0; i < (chromatic.length - chromatic.indexOf(tonic)); i+=12){
+		pushOctave();
+	}
 	console.log(result);
 	return result;
 }
@@ -222,7 +211,7 @@ const arpeggiate = (chord, loop) => {
 	blackKeys.forEach(key => key.stop());
 	for(let i = 0; i < chord.length; i++) {
 		setTimeout(() => {
-			if(i === chord.length+1 || !chord[i].includes('#')){
+			if(!chord[i].includes('#')){
 				if(i!== 0) {
 						whiteKeys.forEach(k => {
 						if(k.note === chord[i - 1]) {k.stop();} 
@@ -268,22 +257,22 @@ const createChord = (tonic, type, extensions) => {
 	let result = [];
 	let scale;
 	let chord = tonic.concat('0');
-	if(type === 'M'){
+	if(type === 'major'){
 		scale = createMajorScale(chord);
 		result.push(scale[0]);
 		result.push(scale[2]);
 		result.push(scale[4]);
-	}else if (type === 'm') {
+	}else if (type === 'minor') {
 		scale = createMinorScale(chord);
 		result.push(scale[0]);
 		result.push(scale[2]);
 		result.push(scale[4]);
-	}else if (type = 'sus2'){
+	}else if (type === 'sus2'){
 		scale = createMajorScale(chord);
 		result.push(scale[0]);
 		result.push(scale[1]);
 		result.push(scale[4]);
-	}else if (type = 'sus4') {
+	}else if (type === 'sus4') {
 		scale = createMajorScale(chord);
 		result.push(scale[0]);
 		result.push(scale[3]);
@@ -297,7 +286,9 @@ const createChord = (tonic, type, extensions) => {
 	console.log(result);
 	if(extensions){
 	extensions.forEach(extension => {
+		if(extension !== 0){
 			result.push(scale[extension - 1]);
+			}
 		});
 	}
 	if(overlap){
@@ -321,12 +312,12 @@ const blackKey = (note_, freq, startx) => {
 				fill(0);
 				stroke(0);
 				strokeWeight(2);
-				rect(startx, height / 2 - 2, scale * (2/3), 32);
+				rect(startx, height / 16 - 2, scale * (2/3), 32);
 			}else {
-				fill(200,100,100);
+				fill('#9966ff');
 				stroke(0);
 				strokeWeight(2);
-				rect(startx, height / 2 - 2, scale * (2/3), 32);
+				rect(startx, height / 16 - 2, scale * (2/3), 32);
 			}
 		},
 		start() {
@@ -358,12 +349,12 @@ const whiteKey = (note_, freq, startx) => {
 				fill(255);
 				stroke(0);
 				strokeWeight(2);
-				rect(startx, height / 2, scale, 48);
+				rect(startx, height / 16, scale, 48);
 			}else {
-				fill(200,100,100);
+				fill('#9966ff');
 				stroke(0);
 				strokeWeight(2);
-				rect(startx, height / 2, scale, 48);
+				rect(startx, height / 16, scale, 48);
 			}
 		},
 		start() {
@@ -382,6 +373,36 @@ const whiteKey = (note_, freq, startx) => {
 }
 
 $(document).ready(function(){
+	const ABCD = ['A', 'B', 'C', 'D'];
+	for(let k = 0; k < 4;k++){
+		for(let j = 0; j < 3; j++){
+			for(let i = 0;i < 24; i++){
+				$("#ext-"+j.toString()+ABCD[k]).append(new Option(i.toString(), i));
+			}
+		}
+	}
+	$('.select').on("input change", function() { 
+		for(let i = 1; i < 5;i++){
+			let extensions = [];
+			for(let j = 0; j < 3;j++){
+				let temp = $('#ext-'+j.toString()+ABCD[i]).val();
+				if (temp !== 0){extensions.push(temp)}	
+			}
+			console.log('#chord-'+i.toString());
+			currentChords[i] =
+				createChord($('#chord-'+i.toString()).val(),
+				 $("#type-"+i.toString()).val(), extensions)
+		}
+	});
+
+	$('#soundType').on("input change", function() { 
+		wave = $('#soundType').val();
+	});
+
+	$("#volume").on("input change", function() { 
+		gainNode.gain.value = this.value; 
+	});
+
 	$("#volume").on("input change", function() { 
 		gainNode.gain.value = this.value; 
 	});
@@ -399,25 +420,12 @@ $(document).ready(function(){
 	});
 		
 	$('#btn').on('click', function() {
-		let  str = $('#in').val();
-		console.log(str);
-		str = str.split(' ');
-		console.log(str);
-		switch(str.length) {
-			case 1:
-				currentNotes = createChord(str[0].toUpperCase(), 'major');
-			break;
-			case 2:
-				currentNotes = createChord(str[0].toUpperCase(), str[1]);
-			break;
-			default:
-				let ext = str.splice(2, str.length - 2).map(ext => parseInt(ext, 10));
-				console.log(ext);
-				currentNotes = 
-					createChord(str[0].toUpperCase(), str[1], ext);
-			break;
+		let extensions = [];
+		for(let i = 0; i < 3;i++){
+			let temp = $('#ext-'+i.toString()).val();
+			if (temp !== 0){extensions.push(temp)}
 		}
-		console.log(currentNotes);
+		currentNotes = createChord($('#chord-1').val(), $("#type-1").val(), extensions);
 	});
 });
 
