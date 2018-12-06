@@ -14,7 +14,9 @@ const gainNode = ctx.createGain();
 const convolver = ctx.createConvolver();
 let playing = false;
 let overlap = false;
-let reverb = true;
+let reverb = false;
+let reverse = false;
+let reverbLevel = 2;
 const ABCD = ['A', 'B', 'C', 'D'];
 
   noteFreq["C0"] = 261.625565300598634;
@@ -67,24 +69,6 @@ const ABCD = ['A', 'B', 'C', 'D'];
   noteFreq["B3"] = 3951.066410048992894;
   noteFreq["C3"] = 4186.009044809578154;
 
-
-function impulseResponse( duration, decay, reverse ) {
-    var sampleRate = ctx.sampleRate;
-    var length = sampleRate * duration;
-    var impulse = ctx.createBuffer(2, length, sampleRate);
-    var impulseL = impulse.getChannelData(0);
-    var impulseR = impulse.getChannelData(1);
-
-    if (!decay)
-        decay = 2.0;
-    for (var i = 0; i < length; i++){
-      var n = reverse ? length - i : i;
-      impulseL[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay);
-      impulseR[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay);
-    }
-    return impulse;
-}
-
 const fillKeys = () => {
 	let tempx = 50 - scale;
 	let freq;
@@ -112,11 +96,12 @@ function setup() {
 	canvas.parent('canvas-holder');
 	fillKeys();
 	convolver.buffer = impulseResponse(4,4,false);
+	convolver.connect(ctx.destination);
 	currentChords  = [
-		createChord('C', 'major'),
-		createChord('C', 'major'),
-		createChord('C', 'major'),
-		createChord('C', 'major'),
+		createChord('C0', 'major', [8, 16]),
+		createChord('F0', 'major', [8, 16]),
+		createChord('A0', 'minor', [8, 16]),
+		createChord('G0', 'major', [8, 16]),
 	];
 }
 
@@ -129,9 +114,9 @@ function setup() {
 				currentChord = 0;
 				currentNotes = currentChords[currentChord];
 			}else{ currentChord++; }
-			console.log(currentChords[currentChord] + 'currentChord:', currentChord);
+			//console.log(currentChords[currentChord], 'currentChord:', currentChord);
 			currentNotes = currentChords[currentChord];
-			arpeggiate(currentChords[currentChord], false);
+		 play(currentChords[currentChord], false);
 		}
 	}
 
@@ -207,52 +192,8 @@ const createMinorScale = tonic => {
 	return result;
 }
 
-const arpeggiate = (chord, loop) => {
-	playing = true;
-	whiteKeys.forEach(key => key.stop());
-	blackKeys.forEach(key => key.stop());
-	for(let i = 0; i < chord.length; i++) {
-		setTimeout(() => {
-			if(!chord[i].includes('#')){
-				if(i!== 0) {
-						whiteKeys.forEach(k => {
-						if(k.note === chord[i - 1]) {k.stop();} 
-					});
-				}
-				if(i !== chord.length + 1) {
-						whiteKeys.forEach(k => {
-						//console.log(k.note);
-						if(k.note === chord[i]) {k.start();} 
-					});
-				}
-			}else{
-				if(i!== 0) {
-					blackKeys.forEach(k => {
-					if(k.note === chord[i - 1]) {k.stop();} 
-				});
-				}
-				if(i !== chord.length + 1) {
-						blackKeys.forEach(k => {
-						//console.log(k.note);
-						if(k.note === chord[i]) {k.start();} 
-					});
-				}
-			}
-		}, i * 200)
-	}
-		setTimeout(() => {
-			if(loop){
-				arpeggiate(chord, true);
-			}else {
-				playing = false;
-			}
-		}, chord.length * 200)
-	
-}
-
-
 const createChord = (tonic, type, extensions) => {
-	console.log(type);
+	console.log(extensions);
 	if(!chromatic.includes(tonic)){
 		//TODO error handling
 	}
@@ -285,16 +226,14 @@ const createChord = (tonic, type, extensions) => {
 		result.push(scale[4]);
 	}
 	console.log(result);
-	if(extensions){
 	for(extension of extensions) {
 		if(scale[extension - 1] !== undefined){
 			console.log(extension);
 			result.push(scale[extension - 1]);
 			}
 		}
-	}
 	if(overlap){
-		arpeggiate(result, true);
+	 play(result, true);
 	}
 	return result;
 }
@@ -325,9 +264,9 @@ const blackKey = (note_, freq, startx) => {
 		start() {
 			f.type = wave;
 			if(reverb){
-				f.connect(gainNode).connect(convolver).connect(ctx.destination);
+				f.connect(gainNode);
 			}else {
-				f.connect(gainNode).connect(ctx.destination);
+				f.connect(gainNode);
 			}
 		},	
 		stop() {
@@ -363,15 +302,63 @@ const whiteKey = (note_, freq, startx) => {
 			f.type = wave;
 			f.frequency.value = noteFreq[note];
 			if(reverb){
-				f.connect(gainNode).connect(convolver).connect(ctx.destination);
+				f.connect(convolver)
 			} else {
-				f.connect(gainNode).connect(ctx.destination);
+				f.connect(ctx.destination);
 			}
 		},	
 		stop() {
 			f.disconnect();
 		}		
 	}
+}
+
+const play = (chord, loop) => {
+	playing = true;
+	for(let i = 0; i < chord.length; i++) {
+		setTimeout(() => {
+			whiteKeys.forEach(key => key.stop());
+			blackKeys.forEach(key => key.stop());
+			//check if note cirresponds to a white or black key
+			if(!chord[i].includes('#')){
+					whiteKeys.forEach(key => {
+						if(key.note === chord[i]) {key.start();} 
+					});
+			}else {
+					blackKeys.forEach(key => {
+					if(key.note === chord[i]) {key.start();} 
+				});
+	
+			}
+		}, i * 200);
+	}
+		setTimeout(() => {
+			if(loop){
+			 play(chord, true);
+			}else {
+				playing = false;
+			}
+		}, chord.length * 200)
+	
+}
+
+
+//for reverb
+function impulseResponse( duration, decay, reverse ) {
+    var sampleRate = ctx.sampleRate;
+    var length = sampleRate * duration;
+    var impulse = ctx.createBuffer(2, length, sampleRate);
+    var impulseL = impulse.getChannelData(0);
+    var impulseR = impulse.getChannelData(1);
+
+    if (!decay)
+        decay = 2.0;
+    for (var i = 0; i < length; i++){
+      var n = reverse ? length - i : i;
+      impulseL[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay);
+      impulseR[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay);
+    }
+    return impulse;
 }
 
 $(document).ready(function(){
@@ -382,17 +369,18 @@ $(document).ready(function(){
 			}
 		}
 	}
+
 	$('.select').on("input change", function() { 
-		//let r = $('#chord-'+1.toString()).val().concat('0');
 		let indexOfRoot = chromatic.indexOf($('#chord-1').val().concat('0'));
-		let indexOfCurrent;;
+		let indexOfCurrent;
 		for(let i = 1; i < 5;i++){
 			indexOfCurrent = chromatic.indexOf($('#chord-'+i.toString()).val().concat('0'));
 			let extensions = [];
-			for(let j = 1; j <= 4;j++){
-				let temp = $('#ext-'+j.toString()+ABCD[i]).val();
+			for(let j = 0; j < 3;j++){
+				let temp = $('#ext-'+(j).toString().concat(ABCD[i -1])).val();
+				//console.log('#ext-'+(j).toString().concat(ABCD[i -1]));
 				if(temp !== undefined && temp !== 0){
-					extensions.push(temp);
+					extensions.push(parseInt(temp,10));
 				}
 			}
 			if(i === 1){
@@ -407,6 +395,22 @@ $(document).ready(function(){
 		}
 	});
 
+
+	$('#reverb').on("input change", function() { 
+		reverb = $('#reverb').val();
+	});
+
+	$('#reverb-level').on("input change", function() { 
+		reverbLevel = $('#reverb-level').val();
+		convolver.buffer = impulseResponse(reverbLevel,reverbLevel,reverse);
+	});
+
+	$('#reverb-reverse').on("input change", function() { 
+		reverse = $('#reverb-reverse').val();
+		convolver.buffer = impulseResponse(reverbLevel,reverbLevel,reverse);
+	});
+
+
 	$('#soundType').on("input change", function() { 
 		wave = $('#soundType').val();
 	});
@@ -420,7 +424,6 @@ $(document).ready(function(){
 			noteFreq[chromatic[n]] *= 2;
 		}
 	});
-
 	$("#octaveDown").on("click", function() { 
 		for(n in chromatic){
 			noteFreq[chromatic[n]] /= 2;

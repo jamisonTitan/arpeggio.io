@@ -3,6 +3,12 @@ body {
   background-color: #fbc1db;
 }
 
+.sound-column{
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+}
+
 .chord-pointer {
   display: inline;
   background-color: yellow;
@@ -11,17 +17,18 @@ body {
   width: 250px;
 }
 
-#top {
+#control-panel {
   display: flex;
   flex-direction: row;
   justify-content: center;
 }
 
-#control-panel #canvas-holder {
-  width:50%;
-    display: flex;
+#sound-options {
+  padding-left: 14px;
+  display: flex;
   flex-direction: row;
 }
+
 #logo {
   width: 340px;
   height: auto;

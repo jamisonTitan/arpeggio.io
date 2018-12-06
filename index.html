@@ -11,24 +11,9 @@
   <body>
       <div>
       <img id='logo'src="logo.png">
-      <div id="top">
   	   <div id='canvas-holder'></div>  
-        <div id='control-panel'>
-          </div>
-        </div>
-            <div>
-            <button id='octaveUp' class='select'>up octave </button>
-            <button id='octaveDown' class='select'>down octave </button>
-
-            <label for="soundType">waveform:</label> 
-            <select name="soundType" class='select' id="soundType">
-              <option value="triangle" selected>Triangle</option>
-              <option value="sine">Sine</option>
-              <option value="square">Square</option>
-              <option value="sawtooth">Sawtooth</option>
-            </select>
-          </div>
-          <div id='chords-holder'>
+          <div id='control-panel'>
+            <div id='chord-holder'>
             <div>
               <select name='chord-1' id='chord-1' class='select'>
                  <option value="C">C</option>
@@ -157,29 +142,42 @@
               </select>
               <div class="chord-pointer"></div>
               </div>
-              <p> Volume: </p>
-            <input type="range" id="volume" min="0" max="2" value="1" step="0.01" />
-            <div id='sliders'>
-              <div>
-              <p> Reverb </p>
-              <label class="switch">
-              <input id='reverb' type="checkbox">
-              <span class="slider"></span>
             </div>
-                    <div>
-              <p> Reverb </p>
-              <label class="switch">
-              <input id='reverb' type="checkbox">
-              <span class="slider"></span>
-            </div>
-                    <div>
-              <p> Reverb </p>
-              <label class="switch">
-              <input id='reverb' type="checkbox">
-              <span class="slider"></span>
-            </div>
-          </div>
-          </div>
+          <div id='sound-options'>
+            <div class='sound-column'>
+            Octave:
+            <button id='octaveUp' class='select'>up</button>
+            <button id='octaveDown' class='select'>down</button>
+
+            waveform:
+            <select name="soundType" class='select' id="soundType">
+              <option value="triangle" selected>Triangle</option>
+              <option value="sine">Sine</option>
+              <option value="square">Square</option>
+              <option value="sawtooth">Sawtooth</option>
+            </select>
+              </div>
+            <div>
+              <div class='sound-column'>
+                Reverb:
+                <select name="reverb" id="reverb">
+                  <option value='true'>On</option>
+                  <option value='false' selected="">Off</option>
+                </select>
+                Intensity:
+                <select name='reverb-level' id='reverb-level'>
+                  <option value='2' selected>1</option>
+                  <option value='4'>2</option>
+                  <option value='6'>3</option>
+                  <option value='8'>4</option>
+                </select>
+                Reverse:
+                  <select name="reverb-reverse" id="reverb-reverse">
+                  <option value='true'>On</option>
+                  <option value='false' selected>Off</option>
+                </select>
+              </div>
+      
     </div>
   </body>
 </html>
