@@ -31,7 +31,7 @@
           <div id='chords-holder'>
             <div>
               <select name='chord-1' id='chord-1' class='select'>
-                 <option value="C" selected>C</option>
+                 <option value="C">C</option>
                  <option value="C#">C#/Bb</option>
                  <option value="D">D</option>
                  <option value="D#">D#/Eb</option>
@@ -40,8 +40,9 @@
                  <option value="F#">F#/Gb</option>
                  <option value="G">G</option>
                  <option value="G#">G#/Ab</option>
-                 <option value="A">B</option>
-                 <option value="B">B#/Cb</option>
+                 <option value="A">A</option>
+                 <option value="A#">A#/Bb</option>
+                 <option value="B"  selected>B</option>
               </select>
               <select name='type-1' id='type-1' class='select'>
                 <option value="major" selected>Major</option>
@@ -58,20 +59,22 @@
               <select name='ext-2A' id='ext-2A' class='select'>
                 <option value="0" selected="">0</option>
               </select>
+              <div class="chord-pointer"></div>
             </div>
             <div>
               <select name='chord-2' id='chord-2' class='select'>
-                 <option value="C" selected>C</option>
+                 <option value="C">C</option>
                  <option value="C#">C#/Bb</option>
                  <option value="D">D</option>
                  <option value="D#">D#/Eb</option>
-                 <option value="E">E</option>
+                 <option value="E" selected>E</option>
                  <option value="F">F</option>
                  <option value="F#">F#/Gb</option>
                  <option value="G">G</option>
                  <option value="G#">G#/Ab</option>
-                 <option value="A">B</option>
-                 <option value="B">B#/Cb</option>
+                  <option value="A">A</option>
+                 <option value="A#">A#/Bb</option>
+                 <option value="B">B</option>
               </select>
               <select name='type-2' id='type-2' class='select'>
                 <option value="major" selected>Major</option>
@@ -88,20 +91,22 @@
               <select name='ext-2B' id='ext-2B' class='select'>
                 <option value="0" selected="">0</option>
               </select>
+              <div class="chord-pointer"></div>
             </div>
             <div>
               <select name='chord-3' id='chord-3' class='select'>
-                 <option value="C" selected>C</option>
+                 <option value="C">C</option>
                  <option value="C#">C#/Bb</option>
                  <option value="D">D</option>
                  <option value="D#">D#/Eb</option>
-                 <option value="E">E</option>
+                 <option value="E" selected>E</option>
                  <option value="F">F</option>
-                 <option value="F#">F#/Gb</option>
+                 <option value="F#" >F#/Gb</option>
                  <option value="G">G</option>
                  <option value="G#">G#/Ab</option>
-                 <option value="A">B</option>
-                 <option value="B">B#/Cb</option>
+                 <option value="A">A</option>
+                 <option value="A#">A#/Bb</option>
+                 <option value="B">B</option>
               </select>
               <select name='type-3' id='type-3' class='select'>
                 <option value="major" selected>Major</option>
@@ -118,6 +123,7 @@
               <select name='ext-2C' id='ext-2C' class='select'>
                 <option value="0" selected="">0</option>
               </select>
+              <div class="chord-pointer"></div>
             </div>
             <div>
               <select name='chord-4' id='chord-4' class='select'>
@@ -127,11 +133,12 @@
                  <option value="D#">D#/Eb</option>
                  <option value="E">E</option>
                  <option value="F">F</option>
-                 <option value="F#">F#/Gb</option>
+                 <option value="F#  selected">F#/Gb</option>
                  <option value="G">G</option>
                  <option value="G#">G#/Ab</option>
-                 <option value="A">B</option>
-                 <option value="B">B#/Cb</option>
+                <option value="A">A</option>
+                 <option value="A#">A#/Bb</option>
+                 <option value="B" selected>B</option>
               </select>
               <select name='type-4' id='type-4' class='select'>
                 <option value="major" selected>Major</option>
@@ -148,6 +155,7 @@
               <select name='ext-2D' id='ext-2D' class='select'>
                 <option value="0" selected="">0</option>
               </select>
+              <div class="chord-pointer"></div>
               </div>
               <p> Volume: </p>
             <input type="range" id="volume" min="0" max="2" value="1" step="0.01" />

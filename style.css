@@ -2,6 +2,15 @@ body {
 	text-align: center;
   background-color: #fbc1db;
 }
+
+.chord-pointer {
+  display: inline;
+  background-color: yellow;
+  border: 10px solid black;
+  border-radius: 50%;
+  width: 250px;
+}
+
 #top {
   display: flex;
   flex-direction: row;

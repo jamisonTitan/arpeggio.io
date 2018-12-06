@@ -15,6 +15,7 @@ const convolver = ctx.createConvolver();
 let playing = false;
 let overlap = false;
 let reverb = true;
+const ABCD = ['A', 'B', 'C', 'D'];
 
   noteFreq["C0"] = 261.625565300598634;
   noteFreq["C#0"] = 277.182630976872096;
@@ -111,12 +112,12 @@ function setup() {
 	canvas.parent('canvas-holder');
 	fillKeys();
 	convolver.buffer = impulseResponse(4,4,false);
-		currentChords  = [
-			createChord("C","sus4",[8 , 10, 16]),
-			createChord("C","major",[8 , 10, 15]),
-			createChord("a","minor", [8 , 10, 15]),
-			createChord("G","major", [8 , 10, 15]),
-						];
+	currentChords  = [
+		createChord('C', 'major'),
+		createChord('C', 'major'),
+		createChord('C', 'major'),
+		createChord('C', 'major'),
+	];
 }
 
 	function draw() {
@@ -126,8 +127,9 @@ function setup() {
 		if(!playing && !overlap){
 			if(!(currentChord === 0) && currentChord % 3 === 0) {
 				currentChord = 0;
+				currentNotes = currentChords[currentChord];
 			}else{ currentChord++; }
-			console.log(currentChords[currentChord]);
+			console.log(currentChords[currentChord] + 'currentChord:', currentChord);
 			currentNotes = currentChords[currentChord];
 			arpeggiate(currentChords[currentChord], false);
 		}
@@ -256,40 +258,40 @@ const createChord = (tonic, type, extensions) => {
 	}
 	let result = [];
 	let scale;
-	let chord = tonic.concat('0');
 	if(type === 'major'){
-		scale = createMajorScale(chord);
+		scale = createMajorScale(tonic);
 		result.push(scale[0]);
 		result.push(scale[2]);
 		result.push(scale[4]);
 	}else if (type === 'minor') {
-		scale = createMinorScale(chord);
+		scale = createMinorScale(tonic);
 		result.push(scale[0]);
 		result.push(scale[2]);
 		result.push(scale[4]);
 	}else if (type === 'sus2'){
-		scale = createMajorScale(chord);
+		scale = createMajorScale(tonic);
 		result.push(scale[0]);
 		result.push(scale[1]);
 		result.push(scale[4]);
 	}else if (type === 'sus4') {
-		scale = createMajorScale(chord);
+		scale = createMajorScale(tonic);
 		result.push(scale[0]);
 		result.push(scale[3]);
 		result.push(scale[4]);
 	}else {
-		scale = createMajorScale(chord);
+		scale = createMajorScale(tonic);
 		result.push(scale[0]);
 		result.push(scale[2]);
 		result.push(scale[4]);
 	}
 	console.log(result);
 	if(extensions){
-	extensions.forEach(extension => {
-		if(extension !== 0){
+	for(extension of extensions) {
+		if(scale[extension - 1] !== undefined){
+			console.log(extension);
 			result.push(scale[extension - 1]);
 			}
-		});
+		}
 	}
 	if(overlap){
 		arpeggiate(result, true);
@@ -373,34 +375,40 @@ const whiteKey = (note_, freq, startx) => {
 }
 
 $(document).ready(function(){
-	const ABCD = ['A', 'B', 'C', 'D'];
 	for(let k = 0; k < 4;k++){
 		for(let j = 0; j < 3; j++){
 			for(let i = 0;i < 24; i++){
-				$("#ext-"+j.toString()+ABCD[k]).append(new Option(i.toString(), i));
+				$("#ext-"+j.toString()+ABCD[k]).append(new Option((i +1).toString(), i + 1));
 			}
 		}
 	}
 	$('.select').on("input change", function() { 
+		//let r = $('#chord-'+1.toString()).val().concat('0');
+		let indexOfRoot = chromatic.indexOf($('#chord-1').val().concat('0'));
+		let indexOfCurrent;;
 		for(let i = 1; i < 5;i++){
+			indexOfCurrent = chromatic.indexOf($('#chord-'+i.toString()).val().concat('0'));
 			let extensions = [];
-			for(let j = 0; j < 3;j++){
+			for(let j = 1; j <= 4;j++){
 				let temp = $('#ext-'+j.toString()+ABCD[i]).val();
-				if (temp !== 0){extensions.push(temp)}	
+				if(temp !== undefined && temp !== 0){
+					extensions.push(temp);
+				}
 			}
-			console.log('#chord-'+i.toString());
-			currentChords[i] =
-				createChord($('#chord-'+i.toString()).val(),
+			if(i === 1){
+			currentChords[i - 1] =
+				createChord($('#chord-'+i.toString()).val()+'0',
 				 $("#type-"+i.toString()).val(), extensions)
+			}else if(indexOfRoot >= indexOfCurrent){
+			currentChords[i - 1] =
+				createChord($('#chord-'+i.toString()).val()+'1',
+				$("#type-"+i.toString()).val(), extensions)	
+			}
 		}
 	});
 
 	$('#soundType').on("input change", function() { 
 		wave = $('#soundType').val();
-	});
-
-	$("#volume").on("input change", function() { 
-		gainNode.gain.value = this.value; 
 	});
 
 	$("#volume").on("input change", function() { 
@@ -417,15 +425,6 @@ $(document).ready(function(){
 		for(n in chromatic){
 			noteFreq[chromatic[n]] /= 2;
 		}
-	});
-		
-	$('#btn').on('click', function() {
-		let extensions = [];
-		for(let i = 0; i < 3;i++){
-			let temp = $('#ext-'+i.toString()).val();
-			if (temp !== 0){extensions.push(temp)}
-		}
-		currentNotes = createChord($('#chord-1').val(), $("#type-1").val(), extensions);
 	});
 });
 
