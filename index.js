@@ -71,15 +71,13 @@ const ABCD = ['A', 'B', 'C', 'D'];
 
 const fillKeys = () => {
 	let tempx = 50 - scale;
-	let freq;
 	for(i in chromatic){
-			freq = noteFreq[chromatic[i]]
 			if( !chromatic[i].includes('#') ) {
-				whiteKeys.push(whiteKey( chromatic[i], freq, tempx));
+				whiteKeys.push(whiteKey( chromatic[i],tempx));
 				tempx += scale;
 			}else {
 				tempx -= scale / 4;
-				blackKeys.push(blackKey( chromatic[i], freq, tempx));
+				blackKeys.push(blackKey( chromatic[i], tempx));
 				tempx += scale / 4;
 			}
 	}
@@ -98,24 +96,32 @@ function setup() {
 	convolver.buffer = impulseResponse(4,4,false);
 	convolver.connect(ctx.destination);
 	currentChords  = [
-		createChord('C0', 'major', [8, 16]),
-		createChord('F0', 'major', [8, 16]),
-		createChord('A0', 'minor', [8, 16]),
-		createChord('G0', 'major', [8, 16]),
+		createChord('A0', 'minor', [7, 9, 17]),
+		createChord('F1', 'major', [8, 7, '-']),
+		createChord('C0', '-5', [7, '-', 13]),
+		createChord('B0', '--', ['-', 7 , 13]),
 	];
+	presets = [
+		[
+			createChord('C0', 'minor', [10, 12, 16]),
+			createChord('A1', 'minor', [10, 12, 16]),
+			createChord('D1', 'minor', [10, 12, 16]),
+			createChord('G1', 'minor', [10, 12 , 16]),
+		],
+	]
 }
 
 	function draw() {
 		background('#fbc1db');
 		for(key of whiteKeys){key.show()}
 		for(key of blackKeys){key.show()}
-		if(!playing && !overlap){
+		if(!playing || overlap){
 			if(!(currentChord === 0) && currentChord % 3 === 0) {
 				currentChord = 0;
 				currentNotes = currentChords[currentChord];
 			}else{ currentChord++; }
-			//console.log(currentChords[currentChord], 'currentChord:', currentChord);
-			currentNotes = currentChords[currentChord];
+				console.log(currentChords[currentChord], 'currentChord:', currentChord);
+				currentNotes = currentChords[currentChord];
 		 play(currentChords[currentChord], false);
 		}
 	}
@@ -219,6 +225,16 @@ const createChord = (tonic, type, extensions) => {
 		result.push(scale[0]);
 		result.push(scale[3]);
 		result.push(scale[4]);
+	}else if (type === '-5') {
+		scale = createMajorScale(tonic);
+		result.push(scale[0]);
+		result.push('-');
+		result.push(scale[4]);
+	}else if (type === '--') {
+		scale = createMajorScale(tonic);
+		result.push(scale[0]);
+		result.push('-');
+		result.push('-');
 	}else {
 		scale = createMajorScale(tonic);
 		result.push(scale[0]);
@@ -227,9 +243,11 @@ const createChord = (tonic, type, extensions) => {
 	}
 	console.log(result);
 	for(extension of extensions) {
-		if(scale[extension - 1] !== undefined){
-			console.log(extension);
-			result.push(scale[extension - 1]);
+		if (extension === '-') { 
+				result.push(extension);
+				}else if(scale[extension - 1] !== undefined){
+				console.log(extension);
+				result.push(scale[extension - 1]);
 			}
 		}
 	if(overlap){
@@ -238,12 +256,11 @@ const createChord = (tonic, type, extensions) => {
 	return result;
 }
 
-const blackKey = (note_, freq, startx) => {
-	let note = note_;
-	let f = ctx.createOscillator();
+const blackKey = (note, startx) => {
+	let f  = ctx.createOscillator();
 	f.type = wave;
-    f.frequency.value = freq;
-	f.start();
+    f.frequency.value = noteFreq[note];
+    f.start();
 	return {
 		get note() {
 			return note;
@@ -262,25 +279,30 @@ const blackKey = (note_, freq, startx) => {
 			}
 		},
 		start() {
+			f = ctx.createOscillator();
 			f.type = wave;
+		    f.frequency.value = noteFreq[note];
+		    f.start();
 			if(reverb){
-				f.connect(gainNode);
-			}else {
-				f.connect(gainNode);
+				convolver.connect(ctx.destination);
+				f.connect(convolver);
+			} else {
+				convolver.disconnect();
+				f.connect(ctx.destination);
 			}
 		},	
 		stop() {
+			f.stop();
 			f.disconnect();
-		}	
+		} 
 	}
 }
 
-const whiteKey = (note_, freq, startx) => {
-	let note = note_;
+const whiteKey = (note, startx) => {
 	let f = ctx.createOscillator();
 	f.type = wave;
-    f.frequency.value = freq;
-	f.start();
+    f.frequency.value = noteFreq[note];
+    f.start();
 	return {
 		get note() {
 			return note;
@@ -299,17 +321,22 @@ const whiteKey = (note_, freq, startx) => {
 			}
 		},
 		start() {
+			f = ctx.createOscillator();
 			f.type = wave;
-			f.frequency.value = noteFreq[note];
+		    f.frequency.value = noteFreq[note];
+		    f.start();
 			if(reverb){
-				f.connect(convolver)
+				convolver.connect(ctx.destination);
+				f.connect(convolver);
 			} else {
+				convolver.disconnect();
 				f.connect(ctx.destination);
 			}
 		},	
 		stop() {
+			f.stop();
 			f.disconnect();
-		}		
+		} 
 	}
 }
 
@@ -319,27 +346,28 @@ const play = (chord, loop) => {
 		setTimeout(() => {
 			whiteKeys.forEach(key => key.stop());
 			blackKeys.forEach(key => key.stop());
-			//check if note cirresponds to a white or black key
-			if(!chord[i].includes('#')){
+			//check if note corresponds to a white or black key
+			if(chord[i].includes('-')){
+				//do nothing
+			}else if(!chord[i].includes('#')){
 					whiteKeys.forEach(key => {
 						if(key.note === chord[i]) {key.start();} 
 					});
 			}else {
 					blackKeys.forEach(key => {
-					if(key.note === chord[i]) {key.start();} 
+					 	if(key.note === chord[i]) {key.start();} 
 				});
 	
 			}
 		}, i * 200);
 	}
-		setTimeout(() => {
-			if(loop){
-			 play(chord, true);
-			}else {
-				playing = false;
-			}
-		}, chord.length * 200)
-	
+	setTimeout(() => {
+		if(loop){
+		 play(chord, true);
+		}else {
+			playing = false;
+		}
+	}, chord.length * 200);
 }
 
 
@@ -365,7 +393,7 @@ $(document).ready(function(){
 	for(let k = 0; k < 4;k++){
 		for(let j = 0; j < 3; j++){
 			for(let i = 0;i < 24; i++){
-				$("#ext-"+j.toString()+ABCD[k]).append(new Option((i +1).toString(), i + 1));
+				//$("#ext-"+j.toString()+ABCD[k]).append(new Option((i +1).toString(), i + 1));
 			}
 		}
 	}
@@ -373,41 +401,64 @@ $(document).ready(function(){
 	$('.select').on("input change", function() { 
 		let indexOfRoot = chromatic.indexOf($('#chord-1').val().concat('0'));
 		let indexOfCurrent;
-		for(let i = 1; i < 5;i++){
-			indexOfCurrent = chromatic.indexOf($('#chord-'+i.toString()).val().concat('0'));
+		for(let i = 0; i < 4;i++){
+			indexOfCurrent = chromatic.indexOf($('#chord-'+(i+1).toString()).val().concat('0'));
 			let extensions = [];
 			for(let j = 0; j < 3;j++){
-				let temp = $('#ext-'+(j).toString().concat(ABCD[i -1])).val();
-				//console.log('#ext-'+(j).toString().concat(ABCD[i -1]));
-				if(temp !== undefined && temp !== 0){
-					extensions.push(parseInt(temp,10));
+				let temp = $('#ext-'+(j).toString().concat(ABCD[i])).val();
+				console.log(temp);
+				if(temp !== undefined && temp !== 0) {
+					if(temp === '-'){extensions.push('-')}else{
+						extensions.push(parseInt(temp,10));
+					}
 				}
 			}
-			if(i === 1){
-			currentChords[i - 1] =
-				createChord($('#chord-'+i.toString()).val()+'0',
-				 $("#type-"+i.toString()).val(), extensions)
-			}else if(indexOfRoot >= indexOfCurrent){
-			currentChords[i - 1] =
-				createChord($('#chord-'+i.toString()).val()+'1',
-				$("#type-"+i.toString()).val(), extensions)	
+			if(i === 0) {
+			currentChords[i] =
+				createChord($('#chord-'+(i+1).toString()).val()+'0',
+				 $("#type-"+(i+1).toString()).val(), extensions);
+
+			}else if(indexOfRoot >= indexOfCurrent) {
+			currentChords[i] =
+				createChord($('#chord-'+(i+1).toString()).val()+'1',
+				$("#type-"+(i+1).toString()).val(), extensions);	
+			}else{
+				currentChords[i] =
+				createChord($('#chord-'+(i+1).toString()).val()+'0',
+				$("#type-"+(i+1).toString()).val(), extensions);
 			}
 		}
 	});
 
 
-	$('#reverb').on("input change", function() { 
-		reverb = $('#reverb').val();
+	$('#reverb').on("input change", function() {
+		//reverb = $('#reverb').val();
+		switch($('#reverb').val()){
+			case 'true':
+				reverb = true;
+			break;
+			case 'false':
+				reverb = false;
+			break;
+			default:
+				//throw error or something
+
+		}
+		console.log($('#reverb').val());
 	});
 
 	$('#reverb-level').on("input change", function() { 
+		var sampleRate = ctx.sampleRate;
+    	var length = sampleRate * 2;
 		reverbLevel = $('#reverb-level').val();
-		convolver.buffer = impulseResponse(reverbLevel,reverbLevel,reverse);
+		convolver.buffer = 
+			impulseResponse(reverbLevel,reverbLevel,reverse);
 	});
 
 	$('#reverb-reverse').on("input change", function() { 
 		reverse = $('#reverb-reverse').val();
-		convolver.buffer = impulseResponse(reverbLevel,reverbLevel,reverse);
+		convolver.buffer = 
+			impulseResponse(reverbLevel,reverbLevel,reverse);
 	});
 
 
