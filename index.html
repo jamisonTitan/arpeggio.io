@@ -1,397 +1,399 @@
 <!DOCTYPE html>
 <html>
-  <head style="text-align:center;">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>Arpeggio.io</title>
-    <script src="jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <script src='p5.min.js'></script>
-    <script src='index.js'></script>
-  </head>
-  <body>
-      <div>
-      <img id='logo'src="logo.png">
-  	   <div id='canvas-holder'></div>  
-          <div id='control-panel'>
-            <div id='chord-holder'>
-            <div>
-              <select name='chord-1' id='chord-1' class='select'>
-                 <option value="C">C</option>
-                 <option value="C#">C#/Bb</option>
-                 <option value="D">D</option>
-                 <option value="D#">D#/Eb</option>
-                 <option value="E">E</option>
-                 <option value="F">F</option>
-                 <option value="F#">F#/Gb</option>
-                 <option value="G">G</option>
-                 <option value="G#">G#/Ab</option>
-                 <option value="A" selected>A</option>
-                 <option value="A#">A#/Bb</option>
-                 <option value="B">B</option>
-              </select>
-              <select name='type-1' id='type-1' class='select'>
-                <option value="major">Major</option>
-                <option value='minor' selected>Minor</option>
-                <option value="sus2">sus2</option>
-                <option value="sus4">sus4</option>
-                <option value='-5'>- 5</option>
-                <option value='--'>- -</option>
-              </select>
-              <select name='ext-0A' id='ext-0A' class='select'>
-                <option value='-'>-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7" selected>7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-              </select>
-              <select name='ext-1A' id='ext-1A' class='select'>
 
-                <option value='-'>-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9" selected>9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
+<head style="text-align:center;">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Arpeggio.io</title>
+  <script src="jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src='p5.min.js'></script>
+  <script src='index.js'></script>
+</head>
 
-              </select>
-              <select name='ext-2A' id='ext-2A' class='select'>
-                <option value='-'>-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17" selected>17</option>
-              </select>
-              <div class="chord-pointer"></div>
-            </div>
-            <div>
-              <select name='chord-2' id='chord-2' class='select'>
-                 <option value="C">C</option>
-                 <option value="C#">C#/Bb</option>
-                 <option value="D">D</option>
-                 <option value="D#">D#/Eb</option>
-                 <option value="E">E</option>
-                 <option value="F" selected>F</option>
-                 <option value="F#">F#/Gb</option>
-                 <option value="G">G</option>
-                 <option value="G#">G#/Ab</option>
-                 <option value="A">A</option>
-                 <option value="A#">A#/Bb</option>
-                 <option value="B">B</option>
-              </select>
-              <select name='type-2' id='type-2' class='select'>
-                <option value="major" selected>Major</option>
-                <option value='minor'>Minor</option>
-                <option value="sus2">sus2</option>
-                <option value="sus4">sus4</option>
-                <option value='-5'>- 5</option>
-                <option value='--'>- -</option>
-              </select>
-              <select name='ext-0B' id='ext-0B' class='select'>
-                <option value='-'>-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8" selected>8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-              </select>
-              <select name='ext-1B' id='ext-1B' class='select'>
-                <option value='-'>-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7" selected>7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-              </select>
-              <select name='ext-2B' id='ext-2B' class='select'>
-                <option value='-'>-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-              </select>
-              <div class="chord-pointer"></div>
-            </div>
-            <div>
-              <select name='chord-3' id='chord-3' class='select'>
-                 <option value="C" selected>C</option>
-                 <option value="C#">C#/Bb</option>
-                 <option value="D">D</option>
-                 <option value="D#">D#/Eb</option>
-                 <option value="E">E</option>
-                 <option value="F">F</option>
-                 <option value="F#" >F#/Gb</option>
-                 <option value="G">G</option>
-                 <option value="G#">G#/Ab</option>
-                 <option value="A">A</option>
-                 <option value="A#">A#/Bb</option>
-                 <option value="B">B</option>
-              </select>
-              <select name='type-3' id='type-3' class='select'>
-                <option value="major">Major</option>
-                <option value='minor'>Minor</option>
-                <option value="sus2">sus2</option>
-                <option value="sus4">sus4</option>
-                <option value='-5' selected>- 5</option>
-                <option value='--'>- -</option>
-              </select>
-              <select name='ext-0C' id='ext-0C' class='select'>
-                <option value='-'>-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7" selected>7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-              </select>
-              <select name='ext-1C' id='ext-1C' class='select'>
-                <option value='-' selected>-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9" >9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-              </select>
-              <select name='ext-2C' id='ext-2C' class='select'>
-                <option value='-'>-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13" selected>13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-              </select>
-              <div class="chord-pointer"></div>
-            </div>
-            <div>
-              <select name='chord-4' id='chord-4' class='select'>
-                 <option value="C" selected>C</option>
-                 <option value="C#">C#/Bb</option>
-                 <option value="D">D</option>
-                 <option value="D#">D#/Eb</option>
-                 <option value="E">E</option>
-                 <option value="F">F</option>
-                 <option value="F#  selected">F#/Gb</option>
-                 <option value="G" selected>G</option>
-                 <option value="G#">G#/Ab</option>
-                <option value="A">A</option>
-                 <option value="A#">A#/Bb</option>
-                 <option value="B" selected>B</option>
-              </select>
-              <select name='type-4' id='type-4' class='select'>
-                <option value="major"d>Major</option>
-                <option value='minor'>Minor</option>
-                <option value="sus2">sus2</option>
-                <option value="sus4">sus4</option>
-                <option value='-5'>- 5</option>
-                <option value='--' selected>- -</option>
-              </select>
-              <select name='ext-0D' id='ext-0D' class='select'>
-                <option value='-' selected>-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-              </select>
-              <select name='ext-1D' id='ext-1D' class='select'>
-                <option value='-' selected>-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13" selected>13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-              </select>
-              <select name='ext-2D' id='ext-2D' class='select'>
-                <option value='-'>-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10" selected>10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-              </select>
-              <div class="chord-pointer"></div>
-              </div>
-            </div>
-          <div id='sound-options'>
-            <div class='sound-column'>
-            Octave:
-            <button id='octaveUp' class='select'>up</button>
-            <button id='octaveDown' class='select'>down</button>
+<body>
+  <div>
+    <img id='logo' src="logo.png">
+    <div id='canvas-holder'></div>
+    <div id='control-panel'>
+      <div id='chord-holder'>
+        <div>
+          <select name='chord-1' id='chord-1' class='select'>
+            <option value="C">C</option>
+            <option value="C#">C#/Bb</option>
+            <option value="D">D</option>
+            <option value="D#">D#/Eb</option>
+            <option value="E">E</option>
+            <option value="F">F</option>
+            <option value="F#">F#/Gb</option>
+            <option value="G">G</option>
+            <option value="G#">G#/Ab</option>
+            <option value="A" selected>A</option>
+            <option value="A#">A#/Bb</option>
+            <option value="B">B</option>
+          </select>
+          <select name='type-1' id='type-1' class='select'>
+            <option value="major">Major</option>
+            <option value='minor' selected>Minor</option>
+            <option value="sus2">sus2</option>
+            <option value="sus4">sus4</option>
+            <option value='-5'>- 5</option>
+            <option value='--'>- -</option>
+          </select>
+          <select name='ext-0A' id='ext-0A' class='select'>
+            <option value='-'>-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7" selected>7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+          </select>
+          <select name='ext-1A' id='ext-1A' class='select'>
 
-            waveform:
-            <select name="soundType" class='select' id="soundType">
-              <option value="triangle" selected>Triangle</option>
-              <option value="sine">Sine</option>
-              <option value="square">Square</option>
-              <option value="sawtooth">Sawtooth</option>
+            <option value='-'>-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9" selected>9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+
+          </select>
+          <select name='ext-2A' id='ext-2A' class='select'>
+            <option value='-'>-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17" selected>17</option>
+          </select>
+
+        </div>
+        <div>
+          <select name='chord-2' id='chord-2' class='select'>
+            <option value="C">C</option>
+            <option value="C#">C#/Bb</option>
+            <option value="D">D</option>
+            <option value="D#">D#/Eb</option>
+            <option value="E">E</option>
+            <option value="F" selected>F</option>
+            <option value="F#">F#/Gb</option>
+            <option value="G">G</option>
+            <option value="G#">G#/Ab</option>
+            <option value="A">A</option>
+            <option value="A#">A#/Bb</option>
+            <option value="B">B</option>
+          </select>
+          <select name='type-2' id='type-2' class='select'>
+            <option value="major" selected>Major</option>
+            <option value='minor'>Minor</option>
+            <option value="sus2">sus2</option>
+            <option value="sus4">sus4</option>
+            <option value='-5'>- 5</option>
+            <option value='--'>- -</option>
+          </select>
+          <select name='ext-0B' id='ext-0B' class='select'>
+            <option value='-'>-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8" selected>8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+          </select>
+          <select name='ext-1B' id='ext-1B' class='select'>
+            <option value='-'>-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7" selected>7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+          </select>
+          <select name='ext-2B' id='ext-2B' class='select'>
+            <option value='-'>-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+          </select>
+
+        </div>
+        <div>
+          <select name='chord-3' id='chord-3' class='select'>
+            <option value="C" selected>C</option>
+            <option value="C#">C#/Bb</option>
+            <option value="D">D</option>
+            <option value="D#">D#/Eb</option>
+            <option value="E">E</option>
+            <option value="F">F</option>
+            <option value="F#">F#/Gb</option>
+            <option value="G">G</option>
+            <option value="G#">G#/Ab</option>
+            <option value="A">A</option>
+            <option value="A#">A#/Bb</option>
+            <option value="B">B</option>
+          </select>
+          <select name='type-3' id='type-3' class='select'>
+            <option value="major">Major</option>
+            <option value='minor'>Minor</option>
+            <option value="sus2">sus2</option>
+            <option value="sus4">sus4</option>
+            <option value='-5' selected>- 5</option>
+            <option value='--'>- -</option>
+          </select>
+          <select name='ext-0C' id='ext-0C' class='select'>
+            <option value='-'>-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7" selected>7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+          </select>
+          <select name='ext-1C' id='ext-1C' class='select'>
+            <option value='-' selected>-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+          </select>
+          <select name='ext-2C' id='ext-2C' class='select'>
+            <option value='-'>-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13" selected>13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+          </select>
+        </div>
+        <div>
+          <select name='chord-4' id='chord-4' class='select'>
+            <option value="C" selected>C</option>
+            <option value="C#">C#/Bb</option>
+            <option value="D">D</option>
+            <option value="D#">D#/Eb</option>
+            <option value="E">E</option>
+            <option value="F">F</option>
+            <option value="F#  selected">F#/Gb</option>
+            <option value="G" selected>G</option>
+            <option value="G#">G#/Ab</option>
+            <option value="A">A</option>
+            <option value="A#">A#/Bb</option>
+            <option value="B" selected>B</option>
+          </select>
+          <select name='type-4' id='type-4' class='select'>
+            <option value="major" d>Major</option>
+            <option value='minor'>Minor</option>
+            <option value="sus2">sus2</option>
+            <option value="sus4">sus4</option>
+            <option value='-5'>- 5</option>
+            <option value='--' selected>- -</option>
+          </select>
+          <select name='ext-0D' id='ext-0D' class='select'>
+            <option value='-' selected>-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+          </select>
+          <select name='ext-1D' id='ext-1D' class='select'>
+            <option value='-' selected>-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13" selected>13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+          </select>
+          <select name='ext-2D' id='ext-2D' class='select'>
+            <option value='-'>-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10" selected>10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+          </select>
+
+        </div>
+      </div>
+      <div id='sound-options'>
+        <div class='sound-column'>
+          Octave:
+          <button id='octaveUp' class='select'>up</button>
+          <button id='octaveDown' class='select'>down</button>
+
+          waveform:
+          <select name="soundType" class='select' id="soundType">
+            <option value="triangle" selected>Triangle</option>
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="sawtooth">Sawtooth</option>
+          </select>
+        </div>
+        <div>
+          <div class='sound-column'>
+            Reverb:
+            <select name="reverb" id="reverb">
+              <option value='true'>On</option>
+              <option value='false' selected>Off</option>
             </select>
-              </div>
-            <div>
-              <div class='sound-column'>
-                Reverb:
-                <select name="reverb" id="reverb">
-                  <option value='true'>On</option>
-                  <option value='false' selected>Off</option>
-                </select>
-                Intensity:
-                <select name='reverb-level' id='reverb-level'>
-                  <option value='2' selected>1</option>
-                  <option value='4'>2</option>
-                  <option value='6'>3</option>
-                  <option value='8'>4</option>
-                </select>
-                Reverse:
-                  <select name="reverb-reverse" id="reverb-reverse">
-                  <option value='true'>On</option>
-                  <option value='false' selected>Off</option>
-                </select>
-              </div>
-      
-    </div>
-  </body>
+            Intensity:
+            <select name='reverb-level' id='reverb-level'>
+              <option value='2' selected>1</option>
+              <option value='4'>2</option>
+              <option value='6'>3</option>
+              <option value='8'>4</option>
+            </select>
+            Reverse:
+            <select name="reverb-reverse" id="reverb-reverse">
+              <option value='true'>On</option>
+              <option value='false' selected>Off</option>
+            </select>
+          </div>
+
+        </div>
+</body>
+
 </html>
